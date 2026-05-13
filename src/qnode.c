@@ -114,8 +114,8 @@ static JSContext *JS_NewCustomContext(JSRuntime *rt)
     if (!ctx)
         return NULL;
     /* system modules */
-    js_init_module_std(ctx, "std");
-    js_init_module_os(ctx, "os");
+    js_init_module_std(ctx, "libc:std");
+    js_init_module_os(ctx, "libc:os");
     return ctx;
 }
 
@@ -489,8 +489,8 @@ int main(int argc, char **argv)
 
         /* make 'std' and 'os' visible to non module code */
         if (load_std) {
-            const char *str = "import * as std from 'std';\n"
-                "import * as os from 'os';\n"
+            const char *str = "import * as std from 'libc:std';\n"
+                "import * as os from 'libc:os';\n"
                 "globalThis.std = std;\n"
                 "globalThis.os = os;\n";
             eval_buf(ctx, str, strlen(str), "<input>", JS_EVAL_TYPE_MODULE);
@@ -524,6 +524,15 @@ int main(int argc, char **argv)
         }
         if (interactive) {
             JS_SetHostPromiseRejectionTracker(rt, NULL, NULL);
+
+            /* Make std and os available to the REPL by importing from libc namespace */
+            const char *setup_std_os =
+                "import * as std from 'libc:std';\n"
+                "import * as os from 'libc:os';\n"
+                "globalThis.std = std;\n"
+                "globalThis.os = os;\n";
+            eval_buf(ctx, setup_std_os, strlen(setup_std_os), "<repl-setup>", JS_EVAL_TYPE_MODULE);
+
             js_std_eval_binary(ctx, qjsc_repl, qjsc_repl_size, 0);
         }
         js_std_loop(ctx);

@@ -22,8 +22,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-import * as std from "std";
-import * as os from "os";
+/* std and os modules are available at runtime via libc:std and libc:os
+   but during qjsc compilation they are accessed via globalThis */
 
 (function(g) {
     /* add 'os' and 'std' bindings */

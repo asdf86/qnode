@@ -600,8 +600,8 @@ int main(int argc, char **argv)
     memset(&dynamic_module_list, 0, sizeof(dynamic_module_list));
 
     /* add system modules */
-    namelist_add(&cmodule_list, "std", "std", 0);
-    namelist_add(&cmodule_list, "os", "os", 0);
+    namelist_add(&cmodule_list, "libc:std", "libc:std", 0);
+    namelist_add(&cmodule_list, "libc:os", "libc:os", 0);
 
     optind = 1;
     while (optind < argc && *argv[optind] == '-') {

@@ -2,6 +2,8 @@
 
 // QNode Module Example
 
+import * as std from "libc:std";
+
 // Import standard library
 const { printf, puts, exit } = std;
 

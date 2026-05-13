@@ -132,7 +132,7 @@ set(REPL_C_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/repl.c")
 
 add_custom_command(
     OUTPUT ${REPL_C_PATH}
-    COMMAND ${CMAKE_BINARY_DIR}/bin/qjsc${CMAKE_EXECUTABLE_SUFFIX} -s -c -o ${REPL_C_PATH} -m ${REPL_JS_PATH}
+    COMMAND ${CMAKE_BINARY_DIR}/bin/qjsc${CMAKE_EXECUTABLE_SUFFIX} -s -c -o ${REPL_C_PATH} ${REPL_JS_PATH}
     DEPENDS qjsc_exe ${REPL_JS_PATH}
     COMMENT "Generating repl.c from repl.js using qjsc"
     VERBATIM

@@ -35,6 +35,8 @@ extern "C" {
 
 JSModuleDef *js_init_module_std(JSContext *ctx, const char *module_name);
 JSModuleDef *js_init_module_os(JSContext *ctx, const char *module_name);
+JSModuleDef *js_init_module_process(JSContext *ctx, const char *module_name);
+void js_process_set_argv(JSContext *ctx, int argc, char **argv);
 void js_std_add_helpers(JSContext *ctx, int argc, char **argv);
 void js_std_loop(JSContext *ctx);
 JSValue js_std_await(JSContext *ctx, JSValue obj);

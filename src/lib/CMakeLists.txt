@@ -3,6 +3,7 @@
 # 创建静态库
 add_library(quickjs_libc STATIC
     quickjs-libc.c
+    process.c
 )
 
 # 设置包含目录

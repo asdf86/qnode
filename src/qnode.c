@@ -116,6 +116,8 @@ static JSContext *JS_NewCustomContext(JSRuntime *rt)
     /* system modules */
     js_init_module_std(ctx, "libc:std");
     js_init_module_os(ctx, "libc:os");
+    /* Register process module with 'node:process' for Node.js compatibility */
+    js_init_module_process(ctx, "node:process");
     return ctx;
 }
 

@@ -4,6 +4,7 @@
 add_library(quickjs_libc STATIC
     quickjs-libc.c
     process.c
+    fs.c
 )
 
 # 设置包含目录

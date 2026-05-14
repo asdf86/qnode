@@ -118,6 +118,10 @@ static JSContext *JS_NewCustomContext(JSRuntime *rt)
     js_init_module_os(ctx, "libc:os");
     /* Register process module with 'node:process' for Node.js compatibility */
     js_init_module_process(ctx, "node:process");
+    /* Register fs module with 'node:fs' for Node.js compatibility */
+    js_init_module_fs(ctx, "node:fs");
+    /* Register fs/promises module */
+    js_init_module_fs_promises(ctx, "node:fs/promises");
     return ctx;
 }
 

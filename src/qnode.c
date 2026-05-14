@@ -488,6 +488,8 @@ int main(int argc, char **argv)
 
     if (!empty_run) {
         js_std_add_helpers(ctx, argc - optind, argv + optind);
+        js_process_set_exec_argv(optind - 1, argv + 1);
+        js_process_set_argv(ctx, argv[0], argc - optind, argv + optind);
 
         /* make 'std' and 'os' visible to non module code */
         if (load_std) {

@@ -381,7 +381,79 @@ declare module "node:fs/promises" {
 }
 
 // ============================================================
+// node:buffer
+// ============================================================
+
+declare module "node:buffer" {
+
+  type BufferEncoding = 'utf8' | 'utf-8' | 'ascii' | 'latin1' | 'binary' | 'hex' | 'base64' | 'base64url';
+
+  interface BufferConstants {
+    MAX_LENGTH: number;
+    MAX_STRING_LENGTH: number;
+  }
+
+  interface Buffer extends Uint8Array {
+    toString(encoding?: BufferEncoding, start?: number, end?: number): string;
+    slice(start?: number, end?: number): Buffer;
+    subarray(start?: number, end?: number): Buffer;
+    write(string: string, offset?: number, length?: number, encoding?: BufferEncoding): number;
+    fill(value: string | number, offset?: number, end?: number, encoding?: BufferEncoding): Buffer;
+    copy(target: Uint8Array, targetStart?: number, sourceStart?: number, sourceEnd?: number): number;
+    equals(otherBuffer: Uint8Array): boolean;
+    compare(otherBuffer: Uint8Array): number;
+    indexOf(value: string | number | Uint8Array, byteOffset?: number, encoding?: BufferEncoding): number;
+    includes(value: string | number | Uint8Array, byteOffset?: number, encoding?: BufferEncoding): boolean;
+    toJSON(): { type: 'Buffer'; data: number[] };
+    swap16(): Buffer;
+    swap32(): Buffer;
+    swap64(): Buffer;
+    readUInt8(offset?: number): number;
+    writeUInt8(value: number, offset?: number): Buffer;
+    readUInt16BE(offset?: number): number;
+    readUInt16LE(offset?: number): number;
+    writeUInt16BE(value: number, offset?: number): Buffer;
+    writeUInt16LE(value: number, offset?: number): Buffer;
+    readUInt32BE(offset?: number): number;
+    readUInt32LE(offset?: number): number;
+    writeUInt32BE(value: number, offset?: number): Buffer;
+    writeUInt32LE(value: number, offset?: number): Buffer;
+    readInt32BE(offset?: number): number;
+    readInt32LE(offset?: number): number;
+    writeInt32BE(value: number, offset?: number): Buffer;
+    writeInt32LE(value: number, offset?: number): Buffer;
+  }
+
+  interface BufferConstructor {
+    prototype: Buffer;
+    alloc(size: number, fill?: string | number): Buffer;
+    allocUnsafe(size: number): Buffer;
+    from(string: string, encoding?: BufferEncoding): Buffer;
+    from(arrayBuffer: ArrayBuffer, byteOffset?: number, length?: number): Buffer;
+    from(array: ReadonlyArray<number>): Buffer;
+    from(buffer: Uint8Array): Buffer;
+    isBuffer(obj: any): obj is Buffer;
+    concat(list: ReadonlyArray<Uint8Array>, totalLength?: number): Buffer;
+    byteLength(string: string | ArrayBuffer | Uint8Array, encoding?: BufferEncoding): number;
+    compare(buf1: Uint8Array, buf2: Uint8Array): number;
+    readonly constants: BufferConstants;
+  }
+
+  const Buffer: BufferConstructor;
+  export default Buffer;
+
+  export { Buffer };
+  export function SlowBuffer(size: number): Buffer;
+}
+
+// ============================================================
 // Global process
 // ============================================================
 
 declare var process: import("node:process").Process;
+
+// ============================================================
+// Global Buffer
+// ============================================================
+
+declare var Buffer: import("node:buffer").BufferConstructor;

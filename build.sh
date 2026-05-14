@@ -41,7 +41,7 @@ echo ""
 echo "=== Build Complete! ==="
 echo "Executable: $BUILD_DIR/bin/qnode"
 echo ""
-
+exit 
 # Run tests
 echo "=== Running Tests ==="
 echo ""

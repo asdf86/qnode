@@ -122,6 +122,8 @@ static JSContext *JS_NewCustomContext(JSRuntime *rt)
     js_init_module_fs(ctx, "node:fs");
     /* Register fs/promises module */
     js_init_module_fs_promises(ctx, "node:fs/promises");
+    /* Register buffer module with 'node:buffer' for Node.js compatibility */
+    js_init_module_buffer(ctx, "node:buffer");
     return ctx;
 }
 
@@ -502,6 +504,13 @@ int main(int argc, char **argv)
                 "globalThis.std = std;\n"
                 "globalThis.os = os;\n";
             eval_buf(ctx, str, strlen(str), "<input>", JS_EVAL_TYPE_MODULE);
+        }
+
+        /* make Buffer available globally like Node.js */
+        {
+            const char *buf_setup = "import { Buffer } from 'node:buffer';\n"
+                "globalThis.Buffer = Buffer;\n";
+            eval_buf(ctx, buf_setup, strlen(buf_setup), "<buffer-setup>", JS_EVAL_TYPE_MODULE);
         }
 
         for(i = 0; i < include_count; i++) {

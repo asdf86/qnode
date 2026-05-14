@@ -515,3 +515,145 @@ declare function setImmediate<TArgs extends any[]>(
   ...args: TArgs
 ): import("node:timers").Timeout;
 declare function clearImmediate(timeout: import("node:timers").Timeout | number | undefined): void;
+
+// ============================================================
+// node:child_process
+// ============================================================
+
+declare module "node:child_process" {
+
+  type BufferEncoding = 'utf8' | 'utf-8' | 'ascii' | 'latin1' | 'binary' | 'hex' | 'base64' | 'base64url';
+
+  // ---- Options ----
+
+  interface ExecSyncOptions {
+    cwd?: string;
+    encoding?: BufferEncoding | 'buffer';
+    env?: Record<string, string>;
+    timeout?: number;
+    maxBuffer?: number;
+    input?: string | ArrayBuffer;
+  }
+
+  interface ExecOptions extends ExecSyncOptions {
+    shell?: boolean | string;
+  }
+
+  interface SpawnOptions {
+    cwd?: string;
+    env?: Record<string, string>;
+    shell?: boolean | string;
+    stdio?: 'pipe' | 'ignore' | ('pipe' | 'ignore')[];
+  }
+
+  interface SpawnSyncOptions extends SpawnOptions {
+    encoding?: BufferEncoding | 'buffer';
+    maxBuffer?: number;
+    timeout?: number;
+    input?: string | ArrayBuffer;
+  }
+
+  interface ExecFileOptions extends SpawnOptions {
+    encoding?: BufferEncoding | 'buffer';
+    maxBuffer?: number;
+    timeout?: number;
+  }
+
+  interface ForkOptions {
+    cwd?: string;
+    env?: Record<string, string>;
+    execPath?: string;
+    stdio?: 'pipe' | 'ignore' | ('pipe' | 'ignore')[];
+  }
+
+  // ---- Error ----
+
+  interface ExecException extends Error {
+    status?: number | null;
+    code?: number | null;
+    cmd?: string;
+    stdout?: string | ArrayBuffer;
+    stderr?: string | ArrayBuffer;
+  }
+
+  // ---- SpawnSyncResult ----
+
+  interface SpawnSyncResult {
+    pid: number;
+    status: number | null;
+    stdout: string | ArrayBuffer;
+    stderr: string | ArrayBuffer;
+    output?: unknown;
+    error?: Error;
+  }
+
+  // ---- ChildProcess (async) ----
+
+  interface ChildProcess {
+    readonly pid: number;
+    exitCode: number | null;
+    signalCode: string | null;
+    killed: boolean;
+    stdin: Writable | null;
+    stdout: Readable | null;
+    stderr: Readable | null;
+    stdio: (Writable | Readable | null)[];
+
+    kill(signal?: string | number): boolean;
+    on(event: 'exit', listener: (code: number | null, signal: string | null) => void): this;
+    on(event: 'close', listener: (code: number | null, signal: string | null) => void): this;
+    on(event: 'error', listener: (err: Error) => void): this;
+    on(event: string, listener: (...args: any[]) => void): this;
+    unref(): void;
+    ref(): void;
+  }
+
+  interface Readable {
+    read(): ArrayBuffer | null;
+  }
+
+  interface Writable {
+    write(data: string | ArrayBuffer): boolean;
+    end(): void;
+  }
+
+  // ---- Functions ----
+
+  function execSync(command: string, options?: ExecSyncOptions): string;
+  function execSync(command: string, options: ExecSyncOptions & { encoding: 'buffer' }): ArrayBuffer;
+
+  function spawnSync(command: string, args?: string[], options?: SpawnSyncOptions): SpawnSyncResult;
+
+  function execFileSync(file: string, args?: string[], options?: ExecFileOptions): string;
+  function execFileSync(file: string, args: string[], options: ExecFileOptions & { encoding: 'buffer' }): ArrayBuffer;
+
+  function spawn(command: string, args?: string[], options?: SpawnOptions): ChildProcess;
+
+  function execFile(
+    file: string,
+    callback: (error: ExecException | null, stdout: string, stderr: string) => void
+  ): ChildProcess;
+  function execFile(
+    file: string,
+    args: string[],
+    callback: (error: ExecException | null, stdout: string, stderr: string) => void
+  ): ChildProcess;
+  function execFile(
+    file: string,
+    args: string[],
+    options: ExecFileOptions,
+    callback: (error: ExecException | null, stdout: string, stderr: string) => void
+  ): ChildProcess;
+
+  function exec(
+    command: string,
+    callback: (error: ExecException | null, stdout: string, stderr: string) => void
+  ): ChildProcess;
+  function exec(
+    command: string,
+    options: ExecOptions,
+    callback: (error: ExecException | null, stdout: string, stderr: string) => void
+  ): ChildProcess;
+
+  function fork(modulePath: string, args?: string[], options?: ForkOptions): ChildProcess;
+}

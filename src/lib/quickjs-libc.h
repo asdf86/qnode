@@ -40,6 +40,7 @@ JSModuleDef *js_init_module_fs(JSContext *ctx, const char *module_name);
 JSModuleDef *js_init_module_fs_promises(JSContext *ctx, const char *module_name);
 JSModuleDef *js_init_module_buffer(JSContext *ctx, const char *module_name);
 JSModuleDef *js_init_module_timers(JSContext *ctx, const char *module_name);
+JSModuleDef *js_init_module_child_process(JSContext *ctx, const char *module_name);
 void js_process_set_argv(JSContext *ctx, const char *exec_path,
                          int argc, char **argv);
 void js_process_set_exec_argv(int argc, char **argv);

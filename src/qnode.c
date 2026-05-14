@@ -45,6 +45,9 @@
 
 #include "cutils.h"
 #include "quickjs-libc.h"
+#if defined(_WIN32)
+#include <windows.h>
+#endif
 
 extern const uint8_t qjsc_repl[];
 extern const uint32_t qjsc_repl_size;
@@ -126,6 +129,8 @@ static JSContext *JS_NewCustomContext(JSRuntime *rt)
     js_init_module_buffer(ctx, "node:buffer");
     /* Register timers module with 'node:timers' for Node.js compatibility */
     js_init_module_timers(ctx, "node:timers");
+    /* Register child_process module */
+    js_init_module_child_process(ctx, "node:child_process");
     return ctx;
 }
 
@@ -326,6 +331,12 @@ void help(void)
 
 int main(int argc, char **argv)
 {
+#if defined(_WIN32)
+    /* Set console to UTF-8 mode for correct Unicode output */
+    SetConsoleOutputCP(65001);
+    SetConsoleCP(65001);
+#endif
+
     JSRuntime *rt;
     JSContext *ctx;
     struct trace_malloc_data trace_data = { NULL };

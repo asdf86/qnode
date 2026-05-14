@@ -7,6 +7,7 @@ add_library(quickjs_libc STATIC
     fs.c
     buffer.c
     timers.c
+    child_process.c
 )
 
 # 设置包含目录

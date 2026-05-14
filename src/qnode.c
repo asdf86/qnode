@@ -124,6 +124,8 @@ static JSContext *JS_NewCustomContext(JSRuntime *rt)
     js_init_module_fs_promises(ctx, "node:fs/promises");
     /* Register buffer module with 'node:buffer' for Node.js compatibility */
     js_init_module_buffer(ctx, "node:buffer");
+    /* Register timers module with 'node:timers' for Node.js compatibility */
+    js_init_module_timers(ctx, "node:timers");
     return ctx;
 }
 
@@ -511,6 +513,43 @@ int main(int argc, char **argv)
             const char *buf_setup = "import { Buffer } from 'node:buffer';\n"
                 "globalThis.Buffer = Buffer;\n";
             eval_buf(ctx, buf_setup, strlen(buf_setup), "<buffer-setup>", JS_EVAL_TYPE_MODULE);
+        }
+
+        /* inject timer globals (setTimeout, setInterval, setImmediate, etc.) */
+        {
+            const char *timer_setup =
+                "import * as _os from 'libc:os';\n"
+                "var _set = _os.setTimeout;\n"
+                "var _clear = _os.clearTimeout;\n"
+                "globalThis.setTimeout = function(cb, ms) {\n"
+                "  if (typeof cb !== 'function') throw new TypeError('callback must be a function');\n"
+                "  var args = Array.prototype.slice.call(arguments, 2);\n"
+                "  return _set(function() { cb.apply(null, args); }, ms);\n"
+                "};\n"
+                "globalThis.clearTimeout = function(id) { _clear(id); };\n"
+                "globalThis.setInterval = function(cb, ms) {\n"
+                "  if (typeof cb !== 'function') throw new TypeError('callback must be a function');\n"
+                "  var args = Array.prototype.slice.call(arguments, 2);\n"
+                "  var h = { _id: 0, _active: true };\n"
+                "  function tick() {\n"
+                "    if (!h._active) return;\n"
+                "    cb.apply(null, args);\n"
+                "    if (h._active) h._id = _set(tick, ms);\n"
+                "  }\n"
+                "  h._id = _set(tick, ms);\n"
+                "  return h;\n"
+                "};\n"
+                "globalThis.clearInterval = function(h) {\n"
+                "  if (h && typeof h === 'object') { h._active = false; _clear(h._id); }\n"
+                "  else _clear(h);\n"
+                "};\n"
+                "globalThis.setImmediate = function(cb) {\n"
+                "  if (typeof cb !== 'function') throw new TypeError('callback must be a function');\n"
+                "  var args = Array.prototype.slice.call(arguments, 1);\n"
+                "  return _set(function() { cb.apply(null, args); }, 0);\n"
+                "};\n"
+                "globalThis.clearImmediate = function(id) { _clear(id); };\n";
+            eval_buf(ctx, timer_setup, strlen(timer_setup), "<timer-setup>", JS_EVAL_TYPE_MODULE);
         }
 
         for(i = 0; i < include_count; i++) {

@@ -457,3 +457,61 @@ declare var process: import("node:process").Process;
 // ============================================================
 
 declare var Buffer: import("node:buffer").BufferConstructor;
+
+// ============================================================
+// node:timers
+// ============================================================
+
+declare module "node:timers" {
+
+  interface Timeout {}
+
+  function setTimeout<TArgs extends any[]>(
+    callback: (...args: TArgs) => void,
+    ms?: number,
+    ...args: TArgs
+  ): Timeout;
+  function clearTimeout(timeout: Timeout | number | undefined): void;
+  function setInterval<TArgs extends any[]>(
+    callback: (...args: TArgs) => void,
+    ms?: number,
+    ...args: TArgs
+  ): Timeout;
+  function clearInterval(timeout: Timeout | number | undefined): void;
+  function setImmediate<TArgs extends any[]>(
+    callback: (...args: TArgs) => void,
+    ...args: TArgs
+  ): Timeout;
+  function clearImmediate(timeout: Timeout | number | undefined): void;
+
+  export {
+    setTimeout,
+    clearTimeout,
+    setInterval,
+    clearInterval,
+    setImmediate,
+    clearImmediate,
+  };
+}
+
+// ============================================================
+// Global timers
+// ============================================================
+
+declare function setTimeout<TArgs extends any[]>(
+  callback: (...args: TArgs) => void,
+  ms?: number,
+  ...args: TArgs
+): import("node:timers").Timeout;
+declare function clearTimeout(timeout: import("node:timers").Timeout | number | undefined): void;
+declare function setInterval<TArgs extends any[]>(
+  callback: (...args: TArgs) => void,
+  ms?: number,
+  ...args: TArgs
+): import("node:timers").Timeout;
+declare function clearInterval(timeout: import("node:timers").Timeout | number | undefined): void;
+declare function setImmediate<TArgs extends any[]>(
+  callback: (...args: TArgs) => void,
+  ...args: TArgs
+): import("node:timers").Timeout;
+declare function clearImmediate(timeout: import("node:timers").Timeout | number | undefined): void;
